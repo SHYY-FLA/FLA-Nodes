@@ -10,4 +10,4 @@ int createUDP();
 
 int bind(int sockfd, int port);
 
-void listeningUDP(int sockfd);
+void listeningUDP(int sockfd, std::atomic<bool>& isRunning);
