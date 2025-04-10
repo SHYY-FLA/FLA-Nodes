@@ -12,5 +12,7 @@ int main() {
     int socket = createUDP();
     if (bind(socket, 74638) != 0) return -1;
 
+    listeningUDP(socket);
+
     return 0;
 }
