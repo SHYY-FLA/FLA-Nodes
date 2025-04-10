@@ -126,3 +126,27 @@ void listeningUDP(int sockfd, std::atomic<bool>& isRunning) {
         std::cout << "\n\n";
     }
 }
+
+void sendUDP(int sockfd, const std::string& ip, int port, const std::string& message) {
+    sockaddr_in destAddr{};
+    memset(&destAddr, 0, sizeof(destAddr));
+    destAddr.sin_family = AF_INET;
+    destAddr.sin_port = htons(port);
+
+    // IP 주소 변환
+    if (inet_pton(AF_INET, ip.c_str(), &destAddr.sin_addr) <= 0) {
+        std::cerr << "📛 잘못된 IP 주소: " << ip << std::endl;
+        return;
+    }
+
+    // 메시지 송신
+    ssize_t sentBytes = sendto(sockfd, message.c_str(), message.size(), 0,
+                               (struct sockaddr*)&destAddr, sizeof(destAddr));
+    if (sentBytes == -1) {
+        std::cerr << "📛 패킷 송신 실패: " << strerror(errno) << std::endl;
+        return;
+    }
+
+    std::cout << "✅ 패킷 송신 성공 | 대상: " << ip << ":" << port
+              << " | 크기: " << sentBytes << " bytes" << std::endl;
+}

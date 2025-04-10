@@ -11,17 +11,21 @@ int main() {
     cout << version() << endl;
 
     int socket = createUDP();
-    if (bind(socket, 74638) != 0) return -1;
+    int receive = createUDP();
+    if (bind(receive, 74638) != 0) return -1;
+    if (bind(socket, 74639) != 0) return -1;
 
     // 종료 플래그 설정
     std::atomic<bool> isRunning{true};
 
     // 리스닝 작업을 별도 스레드로 실행
     std::thread listeningThread([&]() {
-        listeningUDP(socket, isRunning);
+        listeningUDP(receive, isRunning);
     });
 
     cout << "메인 스레드는 다른 작업을 수행합니다. 종료하려면 Enter를 누르세요.\n";
+
+    sendUDP(socket, "127.0.0.1", 9102, "UDP");
 
     cin.get();
     isRunning = false;
