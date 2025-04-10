@@ -11,10 +11,12 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 set(SOURCES
         src/main.cpp
         src/version.cpp
+        src/network/network.cpp
 )
 
 set(HEADERS
         include/version.h
+        include/network/network.h
 )
 
 # 실행 파일 생성
