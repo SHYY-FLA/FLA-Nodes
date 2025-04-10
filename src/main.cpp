@@ -10,6 +10,7 @@ int main() {
     cout << version() << endl;
 
     int socket = create();
+    if (bind(socket, 74638) != 0) return -1;
 
     return 0;
 }

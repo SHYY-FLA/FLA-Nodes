@@ -5,3 +5,5 @@
 #pragma once
 
 int create();
+
+int bind(int sockfd, int port);
