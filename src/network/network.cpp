@@ -117,13 +117,20 @@ void listeningUDP(int sockfd, std::atomic<bool>& isRunning) {
                   << ":" << ntohs(clientAddr.sin_port)
                   << " | 크기: " << recvLen << " bytes" << std::endl;
 
-        // HEX 덤프 출력
-        std::cout << "📦 패킷 내용 (HEX):" << std::endl;
+        // ASCII 변환 및 출력
+        std::cout << "📦 패킷 내용 (ASCII): ";
         for (int i = 0; i < recvLen; ++i) {
-            printf("%02X ", (unsigned char)buffer[i]);
-            if ((i + 1) % 16 == 0) std::cout << std::endl;
+            unsigned char c = buffer[i];
+            if (std::isalnum(c)) { // 숫자 또는 알파벳인 경우 그대로 출력
+                std::cout << c;
+            } else { // 그 외의 문자는 '.'으로 대체
+                std::cout << '.';
+            }
         }
-        std::cout << "\n\n";
+        std::cout << "\n" << std::endl;
+
+        // 클라이언트에게 응답 전송 (수신한 데이터를 그대로 반환)
+        sendto(sockfd, buffer, recvLen, 0, (struct sockaddr*)&clientAddr, clientAddrLen);
     }
 }
 

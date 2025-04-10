@@ -25,7 +25,7 @@ int main() {
 
     cout << "메인 스레드는 다른 작업을 수행합니다. 종료하려면 Enter를 누르세요.\n";
 
-    sendUDP(socket, "127.0.0.1", 9102, "UDP");
+    sendUDP(socket, "127.0.0.1", 9102, "Test Packet");
 
     cin.get();
     isRunning = false;
