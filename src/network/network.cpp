@@ -14,8 +14,19 @@
 void printSocketCreation(int sock);
 void printBindInfo(int sockfd);
 
-int create() {
+int createTCP() {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock == -1) {
+        std::cerr << "소켓 생성 실패: " << strerror(errno) << std::endl;
+    }
+
+    printSocketCreation(sock);
+
+    return sock;
+}
+
+int createUDP() {
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock == -1) {
         std::cerr << "소켓 생성 실패: " << strerror(errno) << std::endl;
     }
@@ -27,8 +38,19 @@ int create() {
 
 void printSocketCreation(int sockfd) {
     if (sockfd != -1) {
-        std::cout << "✅ 소켓 생성 성공 | 디스크립터: " << sockfd
-                  << " | 프로토콜: TCP" << std::endl;
+        int type;
+        socklen_t optlen = sizeof(type);
+
+        // 소켓 타입 확인
+        if (getsockopt(sockfd, SOL_SOCKET, SO_TYPE, &type, &optlen) == 0) {
+            std::string protocol = (type == SOCK_STREAM) ? "TCP" : (type == SOCK_DGRAM) ? "UDP" : "알 수 없음";
+            std::cout << "✅ 소켓 생성 성공 | 디스크립터: " << sockfd
+                      << " | 프로토콜: " << protocol << std::endl;
+        } else {
+            std::cerr << "소켓 타입 조회 실패: " << strerror(errno) << std::endl;
+        }
+    } else {
+        std::cerr << "📛 소켓 생성 실패" << std::endl;
     }
 }
 

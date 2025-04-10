@@ -9,7 +9,7 @@ int main() {
 
     cout << version() << endl;
 
-    int socket = create();
+    int socket = createUDP();
     if (bind(socket, 74638) != 0) return -1;
 
     return 0;

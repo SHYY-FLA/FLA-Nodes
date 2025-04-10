@@ -4,6 +4,8 @@
 
 #pragma once
 
-int create();
+int createTCP();
+
+int createUDP();
 
 int bind(int sockfd, int port);
