@@ -4,14 +4,22 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int createTCP();
 
 int createUDP();
 
-int bind(int sockfd, int port);
+int bindSocket(int sockfd, int port);
 
 void listeningUDP(int sockfd, std::atomic<bool>& isRunning);
 
 void sendUDP(int sockfd, const std::string& ip, int port, const std::string& message);
 
-int close(int sockfd);
+int closeSocket(int sockfd);
+
+#ifdef __cplusplus
+}
+#endif

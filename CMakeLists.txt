@@ -39,6 +39,7 @@ target_link_libraries(NetworkTest
         PRIVATE
         NetworkLib
         GTest::gtest_main
+        GTest::gmock
         pthread
 )
 
