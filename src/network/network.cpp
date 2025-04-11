@@ -157,3 +157,7 @@ void sendUDP(int sockfd, const std::string& ip, int port, const std::string& mes
     std::cout << "✅ 패킷 송신 성공 | 대상: " << ip << ":" << port
               << " | 크기: " << sentBytes << " bytes" << std::endl;
 }
+
+int close(int sockfd) {
+    return close(sockfd);
+}

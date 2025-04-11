@@ -35,5 +35,8 @@ int main() {
     listeningThread.join();
 
     cout << "프로그램이 종료되었습니다.\n";
+
+    close(socket);
+    close(receive);
     return 0;
 }
