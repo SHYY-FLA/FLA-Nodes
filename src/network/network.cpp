@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <cstring>
 #include <netdb.h>
+#include <unistd.h>
 #include <arpa/inet.h>
 
 #include <network/network.h>
@@ -54,7 +55,7 @@ void printSocketCreation(int sockfd) {
     }
 }
 
-int bind(int sockfd, int port) {
+int bindSocket(int sockfd, int port) {
     sockaddr_in serverAddr{};
     memset(&serverAddr, 0, sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
@@ -87,25 +88,33 @@ void printBindInfo(int sockfd) {
 }
 
 void listeningUDP(int sockfd, std::atomic<bool>& isRunning) {
-    char buffer[65536]; // 최대 UDP 패킷 크기
+    char buffer[65536];
     sockaddr_in clientAddr{};
     socklen_t clientAddrLen = sizeof(clientAddr);
 
+    // 소켓 수신 타임아웃 설정 (1초)
+    struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)); // [7][10]
+
     sockaddr_in serverAddr{};
     socklen_t serverAddrLen = sizeof(serverAddr);
-
     if (getsockname(sockfd, (struct sockaddr*)&serverAddr, &serverAddrLen) == -1) {
         std::cerr << "📛 바인드된 포트 조회 실패: " << strerror(errno) << std::endl;
         return;
     }
 
-    int port = ntohs(serverAddr.sin_port); // 네트워크 바이트 오더 → 호스트 바이트 오더
+    int port = ntohs(serverAddr.sin_port);
     std::cout << "\n🎧 UDP 리스닝 시작 | 바인드된 포트: " << port << std::endl;
 
     while (isRunning) {
         ssize_t recvLen = recvfrom(sockfd, buffer, sizeof(buffer), 0,
                                    (struct sockaddr*)&clientAddr, &clientAddrLen);
         if (recvLen == -1) {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                continue;
+            }
             std::cerr << "📛 수신 오류: " << strerror(errno) << std::endl;
             continue;
         }
@@ -158,6 +167,6 @@ void sendUDP(int sockfd, const std::string& ip, int port, const std::string& mes
               << " | 크기: " << sentBytes << " bytes" << std::endl;
 }
 
-int close(int sockfd) {
+int closeSocket(int sockfd) {
     return close(sockfd);
 }
